@@ -1,4 +1,5 @@
 import { type Metadata } from "next";
+import { Toaster } from "react-hot-toast";
 import {
   ClerkProvider,
   SignInButton,
@@ -9,6 +10,7 @@ import {
 } from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +39,17 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <header className="flex justify-end items-center p-4 gap-4 h-16">
+            <nav className="flex items-center gap-4">
+              <Link href="/" className="text-lg font-semibold">
+                Home
+              </Link>
+              <Link href="/add-category" className="text-lg font-semibold">
+                Add Category
+              </Link>
+              <Link href="/categories" className="text-lg font-semibold">
+                Categories
+              </Link>
+            </nav>
             <SignedOut>
               <SignInButton />
               <SignUpButton />
@@ -46,6 +59,7 @@ export default function RootLayout({
             </SignedIn>
           </header>
           {children}
+          <Toaster position="top-right" />
         </body>
       </html>
     </ClerkProvider>
