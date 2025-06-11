@@ -38,26 +38,27 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <header className="flex justify-end items-center p-4 gap-4 h-16">
-            <nav className="flex items-center gap-4">
-              <Link href="/" className="text-lg font-semibold">
-                Home
-              </Link>
-              <Link href="/add-category" className="text-lg font-semibold">
-                Add Category
-              </Link>
-              <Link href="/categories" className="text-lg font-semibold">
-                Categories
-              </Link>
-            </nav>
-            <SignedOut>
-              <SignInButton />
-              <SignUpButton />
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
-          </header>
+          <header className="fixed top-0 left-0 right-0 z-50 flex justify-end items-center p-4 gap-4 h-16 bg-black shadow">
+  <nav className="flex items-center gap-4">
+    <Link href="/" className="text-lg font-semibold">
+      Home
+    </Link>
+    <Link href="/add-category" className="text-lg font-semibold">
+      Add Category
+    </Link>
+    <Link href="/spendings" className="text-lg font-semibold">
+      Spendings
+    </Link>
+  </nav>
+  <SignedOut>
+    <SignInButton />
+    <SignUpButton />
+  </SignedOut>
+  <SignedIn>
+    <UserButton />
+  </SignedIn>
+</header>
+
           {children}
           <Toaster position="top-right" />
         </body>

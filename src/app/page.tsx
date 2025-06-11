@@ -26,7 +26,7 @@ export default async function Home() {
         <>
           {categories.map((category) => (
             <div key={category.id}>
-              <h2 className={`bg-[${category.color}]`}>{category.name}</h2>
+              <h2 style={{ backgroundColor: category.color }}>{category.name}</h2>
             </div>
           ))}
         </>
