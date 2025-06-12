@@ -20,5 +20,6 @@ model Category {
   name        String
   description String
   color       String
+  budget      Float @default(10)
   createdAt   DateTime
 }

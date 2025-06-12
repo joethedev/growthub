@@ -43,8 +43,8 @@ export default function RootLayout({
     <Link href="/" className="text-lg font-semibold">
       Home
     </Link>
-    <Link href="/add-category" className="text-lg font-semibold">
-      Add Category
+    <Link href="/dashboard" className="text-lg font-semibold">
+      Dashboard
     </Link>
     <Link href="/spendings" className="text-lg font-semibold">
       Spendings
