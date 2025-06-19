@@ -12,15 +12,15 @@ export default function DashPage() {
         link:"/dashboard/spendings"
     }, 
     {
-        label:'Spendings',
+        label:'Habits',
         link:"/dashboard/spendings"
     }, 
     {
-        label:'Spendings',
+        label:'Journaling',
         link:"/dashboard/spendings"
     }, 
     {
-        label:'Spendings',
+        label:'Workouts',
         link:"/dashboard/spendings"
     }
 ]
