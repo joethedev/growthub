@@ -33,5 +33,5 @@ model Spending {
   description String
   createdAt   DateTime   @default(now())
 
-  category    Category   @relation(fields: [categoryId], references: [id])
+  category    Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 }

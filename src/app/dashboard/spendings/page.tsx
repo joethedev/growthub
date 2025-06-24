@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import { addSpending } from '@/app/actions/spendings/addSpending';
 import { getSpendings } from '@/app/actions/spendings/getSpendings';
 import { SpendingWithCategory } from '@/app/actions/spendings/getSpendings';
+import { deleteCategoryById } from '@/app/actions/categories/deleteCategory';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -68,6 +69,22 @@ export default function SpendingPage() {
     fetchCategories();
     fetchSpendings();
   }, []);
+
+  const handleDeleteCategory = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this category?')) return;
+
+    startTransition(async () => {
+      try {
+        console.log('Deleting category with ID:', id);
+        deleteCategoryById(id);
+        toast.success('Category deleted successfully!!!!!');
+        setCategories((prev) => prev.filter((cat) => cat.id !== id));
+      } catch (err: any) {
+        console.error('Failed to delete category:', err);
+        toast.error(err.message || 'Something went wrong');
+      }
+    });
+  };
 
   const handleSpendingSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -196,7 +213,10 @@ export default function SpendingPage() {
                       className="text-red-600 hover:text-red-800"
                       title="Delete"
                     >
-                      <Trash2 size={18} />
+                      <Trash2
+                        size={18}
+                        onClick={() => handleDeleteCategory(cat.id)}
+                      />
                     </button>
                   </div>
                 </div>
