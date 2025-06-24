@@ -7,7 +7,11 @@ import { useRouter } from 'next/navigation';
 import { addCategory } from '@/app/actions/addCategory';
 import { getUserCategories } from '@/app/actions/getUserCategories';
 import toast from 'react-hot-toast';
-import { addSpending } from '@/app/actions/addSpending';
+import { addSpending } from '@/app/actions/spendings/addSpending';
+import { getSpendings } from '@/app/actions/spendings/getSpendings';
+import { SpendingWithCategory } from '@/app/actions/spendings/getSpendings';
+
+const ITEMS_PER_PAGE = 10;
 
 type Category = {
   id: string;
@@ -16,32 +20,53 @@ type Category = {
   description: string;
   budget: number;
   color: string;
-  createdAt: string; // Date as string from server
+  createdAt: string;
   amount: number;
 };
 
 export default function SpendingPage() {
   const [showModal, setShowModal] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const [isAddSpending, setIsAddSpending] = useState(false); // state for adding spending
-  const [loading, setLoading] = useState(true); // loading state
+  const [isAddSpending, setIsAddSpending] = useState(false);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
+  const [spendings, setSpendings] = useState<SpendingWithCategory[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(spendings.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const currentSpendings = spendings.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
+
+  const fetchSpendings = async () => {
+    try {
+      const data = await getSpendings();
+      console.log('Fetched spendings:', data);
+      setSpendings(data);
+    } catch (err: any) {
+      console.error('Failed to fetch spendings:', err);
+      toast.error('Failed to load spendings.');
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const data = await getUserCategories();
+      setCategories(data);
+    } catch (err: any) {
+      console.error('Failed to fetch categories:', err);
+      toast.error('Failed to load categories.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const data = await getUserCategories();
-        setCategories(data);
-      } catch (err: any) {
-        console.error('Failed to fetch categories:', err);
-        toast.error('Failed to load categories.');
-      } finally {
-        setLoading(false);
-      }
-    }
-
     fetchCategories();
+    fetchSpendings();
   }, []);
 
   const handleSpendingSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -53,7 +78,8 @@ export default function SpendingPage() {
         console.log('Submitting spending...');
         await addSpending(formData);
         toast.success('Spending added!');
-        router.push('/');
+        setShowModal(false);
+        await fetchCategories();
       } catch (err: any) {
         toast.error(err.message || 'Something went wrong');
       }
@@ -101,7 +127,7 @@ export default function SpendingPage() {
       </div>
 
       {/* Header Row */}
-      <div className="grid grid-cols-4 sm:grid-cols-4 font-medium text-white border-b border-gray-300 pb-2 mb-2">
+      <div className="grid grid-cols-4 sm:grid-cols-4 font-medium text-black border-b border-gray-300 pb-2 mb-2">
         <span className="ml-[16px]">Name</span>
         <span>Amount</span>
         <span>Budget</span>
@@ -181,6 +207,59 @@ export default function SpendingPage() {
       )}
 
       {/* Categories List */}
+      <h2 className="text-xl font-semibold mt-10 mb-4">Spendings</h2>
+      <div className="space-y-6">
+        {/* Grid of Spendings */}
+        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+          {currentSpendings.map((spending) => (
+            <div
+              key={spending.id}
+              className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div className="flex justify-between items-center mb-2">
+                <span
+                  className="text-sm font-medium px-2 py-1 rounded-full"
+                  style={{
+                    backgroundColor: spending.category.color,
+                    color: '#fff',
+                  }}
+                >
+                  {spending.category.name}
+                </span>
+                <span className="text-sm text-gray-500">
+                  {new Date(spending.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+
+              <p className="text-lg font-semibold text-gray-800">
+                {spending.amount.toLocaleString()} MAD
+              </p>
+              <p className="text-sm text-gray-600">{spending.description}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Pagination Controls */}
+        <div className="flex justify-center gap-2 mt-4">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 text-sm bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <span className="text-sm text-gray-600">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 text-sm bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      </div>
 
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
