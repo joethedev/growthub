@@ -32,6 +32,7 @@ export default function SpendingPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [spendings, setSpendings] = useState<SpendingWithCategory[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [color, setColor] = useState('#ff0000');
 
   const totalPages = Math.ceil(spendings.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -39,6 +40,10 @@ export default function SpendingPage() {
     startIndex,
     startIndex + ITEMS_PER_PAGE
   );
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setColor(e.target.value);
+  };
 
   const fetchSpendings = async () => {
     try {
@@ -365,6 +370,15 @@ export default function SpendingPage() {
                   className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-800 transition bg-white text-gray-900 placeholder-gray-400"
                 />
                 <input
+                  type="color"
+                  value={color}
+                  onChange={handleChange}
+                  className="w-16 h-10 p-0 border-none rounded cursor-pointer"
+                />
+                <p className="mt-2">Selected color: {color}</p>
+                <input
+                  type="hidden"
+                  value={color}
                   name="color"
                   placeholder="#HEXCOLOR"
                   className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-800 transition bg-white text-gray-900 placeholder-gray-400"
