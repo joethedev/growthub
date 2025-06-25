@@ -30,7 +30,6 @@ export default function SpendingPage() {
   const [isPending, startTransition] = useTransition();
   const [isAddSpending, setIsAddSpending] = useState(false);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
   const [spendings, setSpendings] = useState<SpendingWithCategory[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -47,7 +46,7 @@ export default function SpendingPage() {
       const data = await getSpendings();
       console.log('Fetched spendings:', data);
       setSpendings(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to fetch spendings:', err);
       toast.error('Failed to load spendings.');
     }
@@ -57,7 +56,7 @@ export default function SpendingPage() {
     try {
       const data = await getUserCategories();
       setCategories(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to fetch categories:', err);
       toast.error('Failed to load categories.');
     } finally {
@@ -79,9 +78,13 @@ export default function SpendingPage() {
         deleteCategoryById(id);
         toast.success('Category deleted successfully!!!!!');
         setCategories((prev) => prev.filter((cat) => cat.id !== id));
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Failed to delete category:', err);
-        toast.error(err.message || 'Something went wrong');
+        if (err instanceof Error) {
+          toast.error(err.message || 'Something went wrong');
+        } else {
+          toast.error('Something went wrong');
+        }
       }
     });
   };
@@ -98,8 +101,12 @@ export default function SpendingPage() {
         setShowModal(false);
         await fetchCategories();
         await fetchSpendings();
-      } catch (err: any) {
-        toast.error(err.message || 'Something went wrong');
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          toast.error(err.message || 'Something went wrong');
+        } else {
+          toast.error('Something went wrong');
+        }
       }
     });
   };
@@ -114,8 +121,12 @@ export default function SpendingPage() {
         toast.success('Category added!');
         setShowModal(false);
         await fetchCategories();
-      } catch (err: any) {
-        toast.error(err.message || 'Something went wrong');
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          toast.error(err.message || 'Something went wrong');
+        } else {
+          toast.error('Something went wrong');
+        }
       }
     });
   };

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { addCategory } from "@/app/actions/addCategory";
-import toast from "react-hot-toast";
+import { useTransition } from 'react';
+import { useRouter } from 'next/navigation';
+import { addCategory } from '@/app/actions/addCategory';
+import toast from 'react-hot-toast';
 
 export default function AddCategoryPage() {
   const [isPending, startTransition] = useTransition();
@@ -15,12 +15,16 @@ export default function AddCategoryPage() {
 
     startTransition(async () => {
       try {
-        console.log("Submitting category...");
+        console.log('Submitting category...');
         await addCategory(formData);
-        toast.success("Category added!");
-        router.push("/");
-      } catch (err: any) {
-        toast.error(err.message || "Something went wrong");
+        toast.success('Category added!');
+        router.push('/');
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          toast.error(err.message || 'Something went wrong');
+        } else {
+          toast.error('Something went wrong');
+        }
       }
     });
   };
@@ -47,7 +51,7 @@ export default function AddCategoryPage() {
         className="bg-blue-600 text-white px-4 py-2 rounded"
         disabled={isPending}
       >
-        {isPending ? "Adding..." : "Add Category"}
+        {isPending ? 'Adding...' : 'Add Category'}
       </button>
     </form>
   );

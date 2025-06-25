@@ -1,29 +1,25 @@
-"use client";
-
-import { useTransition } from "react";
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
-import Link from "next/link";
+'use client';
+import Link from 'next/link';
 
 export default function DashPage() {
- const buttons = [
+  const buttons = [
     {
-        label:'Spendings',
-        link:"/dashboard/spendings"
-    }, 
+      label: 'Spendings',
+      link: '/dashboard/spendings',
+    },
     {
-        label:'Habits',
-        link:"/dashboard/spendings"
-    }, 
+      label: 'Habits',
+      link: '/dashboard/spendings',
+    },
     {
-        label:'Journaling',
-        link:"/dashboard/spendings"
-    }, 
+      label: 'Journaling',
+      link: '/dashboard/spendings',
+    },
     {
-        label:'Workouts',
-        link:"/dashboard/spendings"
-    }
-]
+      label: 'Workouts',
+      link: '/dashboard/spendings',
+    },
+  ];
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-white text-gray-900">
@@ -40,5 +36,5 @@ export default function DashPage() {
         ))}
       </div>
     </main>
-  )
+  );
 }
