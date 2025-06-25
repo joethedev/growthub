@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { Pencil, Trash2, X } from 'lucide-react';
 import { useTransition } from 'react';
-import { useRouter } from 'next/navigation';
 import { addCategory } from '@/app/actions/addCategory';
 import { getUserCategories } from '@/app/actions/getUserCategories';
 import toast from 'react-hot-toast';
