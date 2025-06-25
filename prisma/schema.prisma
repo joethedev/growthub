@@ -10,28 +10,29 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Category {
-  id          String     @id @default(cuid())
+  id          String   @id @default(cuid())
   userId      String
   name        String
   description String
   color       String
-  budget      Float      @default(10)
-  createdAt   DateTime   @default(now())
+  budget      Float    @default(10)
+  createdAt   DateTime @default(now())
 
-  spendings   Spending[] 
+  spendings Spending[]
 }
 
 model Spending {
-  id          String     @id @default(cuid())
+  id          String   @id @default(cuid())
   categoryId  String
   amount      Float
   description String
-  createdAt   DateTime   @default(now())
+  createdAt   DateTime @default(now())
 
-  category    Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 }

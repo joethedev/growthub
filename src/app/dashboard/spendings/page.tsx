@@ -97,6 +97,7 @@ export default function SpendingPage() {
         toast.success('Spending added!');
         setShowModal(false);
         await fetchCategories();
+        await fetchSpendings();
       } catch (err: any) {
         toast.error(err.message || 'Something went wrong');
       }
@@ -111,7 +112,8 @@ export default function SpendingPage() {
         console.log('Submitting category...');
         await addCategory(formData);
         toast.success('Category added!');
-        router.push('/');
+        setShowModal(false);
+        await fetchCategories();
       } catch (err: any) {
         toast.error(err.message || 'Something went wrong');
       }
