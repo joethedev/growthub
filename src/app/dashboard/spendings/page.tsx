@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { X } from 'lucide-react';
 import { useTransition } from 'react';
 import { addCategory } from '@/app/actions/addCategory';
 import { getUserCategories } from '@/app/actions/getUserCategories';
