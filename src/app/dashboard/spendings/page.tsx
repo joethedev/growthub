@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Pencil, Trash2, X } from 'lucide-react';
 import { useTransition } from 'react';
 import { addCategory } from '@/app/actions/addCategory';
 import { getUserCategories } from '@/app/actions/getUserCategories';
@@ -10,6 +9,7 @@ import { addSpending } from '@/app/actions/spendings/addSpending';
 import { getSpendings } from '@/app/actions/spendings/getSpendings';
 import { SpendingWithCategory } from '@/app/actions/spendings/getSpendings';
 import { deleteCategoryById } from '@/app/actions/categories/deleteCategory';
+import { editCategory } from '@/app/actions/categories/editCategory';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -26,12 +26,14 @@ type Category = {
 
 export default function SpendingPage() {
   const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [isAddSpending, setIsAddSpending] = useState(false);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState<Category[]>([]);
   const [spendings, setSpendings] = useState<SpendingWithCategory[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [color, setColor] = useState('#ff0000');
 
   const totalPages = Math.ceil(spendings.length / ITEMS_PER_PAGE);
@@ -73,15 +75,24 @@ export default function SpendingPage() {
     fetchSpendings();
   }, []);
 
-  const handleDeleteCategory = async (id: string) => {
+  const handleEditCategory = (category: Category) => {
+    console.log('Editing category with ID:', category.id);
+    setEditingCategory(category);
+    setShowEditModal(true);
+    // Here you would typically fetch the category details and populate a form
+    // For now, we just log the ID
+  };
+
+  const handleDeleteCategory = async (category: Category) => {
     if (!confirm('Are you sure you want to delete this category?')) return;
 
     startTransition(async () => {
       try {
-        console.log('Deleting category with ID:', id);
-        deleteCategoryById(id);
+        console.log('Deleting category with ID:', category.id);
+        deleteCategoryById(category.id);
         toast.success('Category deleted successfully!!!!!');
-        setCategories((prev) => prev.filter((cat) => cat.id !== id));
+        setShowEditModal(false);
+        setCategories((prev) => prev.filter((cat) => cat.id !== category.id));
       } catch (err: unknown) {
         console.error('Failed to delete category:', err);
         if (err instanceof Error) {
@@ -105,6 +116,27 @@ export default function SpendingPage() {
         setShowModal(false);
         await fetchCategories();
         await fetchSpendings();
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          toast.error(err.message || 'Something went wrong');
+        } else {
+          toast.error('Something went wrong');
+        }
+      }
+    });
+  };
+
+  const handleEditSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
+    startTransition(async () => {
+      try {
+        console.log('Submitting category...');
+        await editCategory(formData);
+        toast.success('Category edited!');
+        setShowEditModal(false);
+        await fetchCategories();
       } catch (err: unknown) {
         if (err instanceof Error) {
           toast.error(err.message || 'Something went wrong');
@@ -161,13 +193,10 @@ export default function SpendingPage() {
       </div>
 
       {/* Header Row */}
-      <div className="grid grid-cols-4 sm:grid-cols-4 font-medium text-black border-b border-gray-300 pb-2 mb-2">
+      <div className="grid grid-cols-3 sm:grid-cols-3 font-semibold text-black border-b border-gray-300 pb-2 mb-2">
         <span className="ml-[16px]">Name</span>
         <span>Amount</span>
-        <span>Budget</span>
-        <span className="col-span-2 sm:col-span-1 text-right mr-[16px]">
-          Actions
-        </span>
+        <span className="text-center">Budget</span>
       </div>
 
       {loading ? (
@@ -215,27 +244,15 @@ export default function SpendingPage() {
                   style={{ width: `${percent}%` }}
                 />
                 {/* Content */}
-                <div className="relative grid grid-cols-4 sm:grid-cols-4 text-[20px] items-center px-4 py-2 hover:scale-103 hover:cursor-pointer">
+                <div
+                  onClick={() => handleEditCategory(cat)}
+                  className="relative grid grid-cols-3 sm:grid-cols-3 text-[17px] items-center px-4 py-2 hover:scale-103 hover:cursor-pointer"
+                >
                   <span className={`${textColor}`}>{cat.name}</span>
                   <span className={`${textColor}`}>${cat.amount}</span>
-                  <span className={`${textColor}`}>${cat.budget}</span>
-                  <div className="col-span-2 sm:col-span-1 flex justify-end gap-2">
-                    <button
-                      className="text-blue-600 hover:text-blue-800"
-                      title="Edit"
-                    >
-                      <Pencil size={18} />
-                    </button>
-                    <button
-                      className="text-red-600 hover:text-red-800"
-                      title="Delete"
-                    >
-                      <Trash2
-                        size={18}
-                        onClick={() => handleDeleteCategory(cat.id)}
-                      />
-                    </button>
-                  </div>
+                  <span className={`${textColor} text-center`}>
+                    ${cat.budget}
+                  </span>
                 </div>
               </div>
             );
@@ -392,6 +409,82 @@ export default function SpendingPage() {
                 </button>
               </form>
             )}
+          </div>
+        </div>
+      )}
+
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white w-full max-w-md p-6 rounded-lg shadow-lg relative">
+            {/* Close Button */}
+            <button
+              className="absolute top-3 right-3 text-gray-500 hover:text-black"
+              onClick={() => setShowEditModal(false)}
+            >
+              <X size={20} />
+            </button>
+            <h2 className="text-xl font-semibold mb-4">Editing Category</h2>
+            <form
+              onSubmit={handleEditSubmit}
+              className="space-y-4 max-w-sm mx-auto mt-10"
+            >
+              <input
+                name="categoryId"
+                defaultValue={editingCategory?.id || ''}
+                type="hidden"
+                className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-800 transition bg-white text-gray-900 placeholder-gray-400"
+              />
+              <input
+                name="name"
+                defaultValue={editingCategory?.name || ''}
+                placeholder="Name"
+                className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-800 transition bg-white text-gray-900 placeholder-gray-400"
+              />
+              <input
+                name="description"
+                defaultValue={editingCategory?.description || ''}
+                placeholder="Description"
+                className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-800 transition bg-white text-gray-900 placeholder-gray-400"
+              />
+              <input
+                type="number"
+                name="budget"
+                defaultValue={editingCategory?.budget || ''}
+                placeholder="Budget"
+                className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-800 transition bg-white text-gray-900 placeholder-gray-400"
+              />
+              <input
+                type="color"
+                defaultValue={editingCategory?.color || '#ff0000'}
+                onChange={handleChange}
+                className="w-16 h-10 p-0 border-none rounded cursor-pointer"
+              />
+              <p className="mt-2">
+                Selected color: {editingCategory?.color || '#ff0000'}
+              </p>
+              <input
+                type="hidden"
+                defaultValue={editingCategory?.color || '#ff0000'}
+                name="color"
+                placeholder="#HEXCOLOR"
+                className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-800 transition bg-white text-gray-900 placeholder-gray-400"
+              />
+              <button
+                type="submit"
+                className="bg-green-200 w-full text-black px-4 py-2 rounded-lg shadow hover:bg-green-300 transition"
+                disabled={isPending}
+              >
+                {isPending ? 'Editing...' : 'Edit Category'}
+              </button>
+              <button
+                onClick={() => {
+                  handleDeleteCategory(editingCategory as Category);
+                }}
+                className="bg-red-500 w-full text-white px-4 py-2 rounded-lg shadow hover:bg-red-800 transition"
+              >
+                Delete
+              </button>
+            </form>
           </div>
         </div>
       )}
