@@ -250,9 +250,9 @@ export default function SpendingPage() {
                   className="relative grid grid-cols-3 sm:grid-cols-3 text-[17px] items-center px-4 py-2 hover:scale-103 hover:cursor-pointer"
                 >
                   <span className={`${textColor}`}>{cat.name}</span>
-                  <span className={`${textColor}`}>${cat.amount}</span>
+                  <span className={`${textColor}`}>{cat.amount}DH</span>
                   <span className={`${textColor} text-center`}>
-                    ${cat.budget}
+                    {cat.budget}DH
                   </span>
                 </div>
               </div>
