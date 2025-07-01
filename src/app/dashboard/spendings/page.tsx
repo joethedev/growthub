@@ -11,6 +11,7 @@ import { getSpendings } from '@/app/actions/spendings/getSpendings';
 import { SpendingWithCategory } from '@/app/actions/spendings/getSpendings';
 import { deleteCategoryById } from '@/app/actions/categories/deleteCategory';
 import { editCategory } from '@/app/actions/categories/editCategory';
+import CategoryCard from '@/components/CategoryCard';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -191,6 +192,23 @@ export default function SpendingPage() {
             + Add Category
           </button>
         </div>
+      </div>
+
+      <div className="flex flex-col gap-4 ">
+        {categories.map((category) => (
+          <div key={category.id} className="flex-shrink-0 w-full">
+            <CategoryCard
+              id={category.id}
+              name={category.name}
+              color={category.color}
+              budget={category.budget}
+              spent={category.amount}
+              currency="MAD"
+              onEdit={() => handleEditCategory(category)}
+              onDelete={() => handleDeleteCategory(category)}
+            />
+          </div>
+        ))}
       </div>
 
       {/* Header Row */}
