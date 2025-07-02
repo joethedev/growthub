@@ -19,13 +19,10 @@ export async function addSpending(formData: FormData) {
     categoryId: formData.get('category'),
   };
 
-  console.log(`++++++++++++ Raw data +++++: ${JSON.stringify(raw)}`);
-
   const parsed = SpendingSchema.safeParse(raw);
-  console.log(`++++++++++++ Parsed data +++++: ${JSON.stringify(parsed)}`);
 
   if (!parsed.success) {
-    const errorMessages = parsed.error.errors.map((e) => e.message).join(', ');
+    const errorMessages = parsed.error.errors.map((e) => e.message).join('\n');
     throw new Error(errorMessages);
   }
 

@@ -12,6 +12,8 @@ import { SpendingWithCategory } from '@/app/actions/spendings/getSpendings';
 import { deleteCategoryById } from '@/app/actions/categories/deleteCategory';
 import { editCategory } from '@/app/actions/categories/editCategory';
 import CategoryCard from '@/components/CategoryCard';
+import { DatePicker } from '@/components/ui/DatePicker';
+import { setDate } from 'date-fns';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -37,6 +39,7 @@ export default function SpendingPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [color, setColor] = useState('#ff0000');
+  const [date, setDate] = useState<Date | undefined>(undefined);
 
   const totalPages = Math.ceil(spendings.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -376,6 +379,9 @@ export default function SpendingPage() {
                     </option>
                   ))}
                 </select>
+                <DatePicker
+                  onChange={(date: Date | undefined) => setDate(date)}
+                />
                 <button
                   type="submit"
                   className="bg-green-200 w-full text-black px-4 py-2 rounded-lg shadow hover:bg-green-300 transition"

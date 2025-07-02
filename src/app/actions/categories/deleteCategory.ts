@@ -7,7 +7,6 @@ export async function deleteCategoryById(id: string) {
     await prisma.category.delete({
       where: { id },
     });
-    console.log('✅ Category deleted successfully');
   } catch (error) {
     console.error('❌ Error deleting category:', error);
     throw error;
