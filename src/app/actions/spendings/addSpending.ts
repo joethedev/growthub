@@ -8,15 +8,21 @@ const SpendingSchema = z.object({
   amount: z.number().min(1, 'Amount is required'),
   description: z.string().min(1, 'Description is required'),
   categoryId: z.string().min(1, 'You must select a category'),
+  createdAt: z.date().optional(),
 });
 
 export async function addSpending(formData: FormData) {
   const authUser = await currentUser();
-  console.log(`++++++++++++ User here +++++: ${authUser?.id}`);
+  const createdAtRaw = formData.get('createdAt');
+  console.log('Created At Raw:', createdAtRaw);
   const raw = {
     amount: Number(formData.get('amount')),
     description: formData.get('description'),
     categoryId: formData.get('category'),
+    createdAt:
+      typeof createdAtRaw === 'string' && createdAtRaw
+        ? new Date(createdAtRaw)
+        : undefined,
   };
 
   const parsed = SpendingSchema.safeParse(raw);

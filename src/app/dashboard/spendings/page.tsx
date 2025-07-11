@@ -13,7 +13,9 @@ import { deleteCategoryById } from '@/app/actions/categories/deleteCategory';
 import { editCategory } from '@/app/actions/categories/editCategory';
 import CategoryCard from '@/components/CategoryCard';
 import { DatePicker } from '@/components/ui/DatePicker';
-import { setDate } from 'date-fns';
+import CategoryModal from '@/components/CategoryModal';
+import { CategorySpendings, SpendingType } from '@/lib/types';
+import { getSpendingsByCategory } from '@/app/actions/spendings/getSpendingsByCategory';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -39,28 +41,14 @@ export default function SpendingPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [color, setColor] = useState('#ff0000');
-  const [date, setDate] = useState<Date | undefined>(undefined);
-
-  const totalPages = Math.ceil(spendings.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentSpendings = spendings.slice(
-    startIndex,
-    startIndex + ITEMS_PER_PAGE
+  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [catSpendings, setCatSpendings] = useState<CategorySpendings | null>(
+    null
   );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setColor(e.target.value);
-  };
-
-  const fetchSpendings = async () => {
-    try {
-      const data = await getSpendings();
-      console.log('Fetched spendings:', data);
-      setSpendings(data);
-    } catch (err: unknown) {
-      console.error('Failed to fetch spendings:', err);
-      toast.error('Failed to load spendings.');
-    }
   };
 
   const fetchCategories = async () => {
@@ -77,15 +65,12 @@ export default function SpendingPage() {
 
   useEffect(() => {
     fetchCategories();
-    fetchSpendings();
   }, []);
 
   const handleEditCategory = (category: Category) => {
     console.log('Editing category with ID:', category.id);
     setEditingCategory(category);
     setShowEditModal(true);
-    // Here you would typically fetch the category details and populate a form
-    // For now, we just log the ID
   };
 
   const handleDeleteCategory = async (category: Category) => {
@@ -115,12 +100,10 @@ export default function SpendingPage() {
 
     startTransition(async () => {
       try {
-        console.log('Submitting spending...');
         await addSpending(formData);
         toast.success('Spending added!');
         setShowModal(false);
         await fetchCategories();
-        await fetchSpendings();
       } catch (err: unknown) {
         if (err instanceof Error) {
           toast.error(err.message || 'Something went wrong');
@@ -151,6 +134,23 @@ export default function SpendingPage() {
       }
     });
   };
+
+  const handleOpenCategory = (categoryId: string) => {
+    setIsModalOpen(true);
+    startTransition(async () => {
+      try {
+        const categorySpendings = await getSpendingsByCategory(categoryId);
+        setCatSpendings(categorySpendings);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          toast.error(err.message || 'Something went wrong');
+        } else {
+          toast.error('Something went wrong');
+        }
+      }
+    });
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -171,17 +171,21 @@ export default function SpendingPage() {
       }
     });
   };
+  function handleOnCloseCategoryModal(): void {
+    setIsModalOpen(false);
+    setCatSpendings(null);
+  }
+
   return (
     <div className="w-full max-w-3xl mx-auto p-4 mt-[70px]">
       <div className="flex justify-between mb-10">
-        <h2 className="text-xl font-semibold mb-4">Categories</h2>
-        <div className="flex gap-2">
+        <div className="flex flex-col w-full gap-2">
           <button
             onClick={() => {
               setIsAddSpending(true);
               setShowModal(true);
             }}
-            className=" text-green-300 px-4 py-2 rounded-lg shadow border-2 border-green-300 hover:bg-green-300 hover:text-white transition"
+            className="w-full text-green-300 px-4 py-2 rounded-lg shadow border-2 border-green-300 hover:bg-green-300 hover:text-white transition"
           >
             + Add Spending
           </button>
@@ -207,134 +211,12 @@ export default function SpendingPage() {
               budget={category.budget}
               spent={category.amount}
               currency="MAD"
+              onClick={() => handleOpenCategory(category.id)}
               onEdit={() => handleEditCategory(category)}
               onDelete={() => handleDeleteCategory(category)}
             />
           </div>
         ))}
-      </div>
-
-      {/* Header Row */}
-      <div className="grid grid-cols-3 sm:grid-cols-3 font-semibold text-black border-b border-gray-300 pb-2 mb-2">
-        <span className="ml-[16px]">Name</span>
-        <span>Amount</span>
-        <span className="text-center">Budget</span>
-      </div>
-
-      {loading ? (
-        <div className="flex justify-center items-center mt-7">
-          <svg
-            className="animate-spin h-6 w-6 text-green-500"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            ></circle>
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-            ></path>
-          </svg>
-        </div>
-      ) : categories.length === 0 ? (
-        <div className="flex items-center justify-center h-64">
-          <span className="text-gray-500">No categories found.</span>
-        </div>
-      ) : (
-        <div className="flex flex-col gap-2">
-          {categories.map((cat) => {
-            const rawPercent = (cat.amount / cat.budget) * 100;
-            const percent = Math.min(rawPercent, 100);
-            const progressColor =
-              rawPercent > 100 ? 'bg-red-500' : 'bg-green-300';
-            const textColor = rawPercent > 100 ? 'text-white' : 'text-gray-700';
-            return (
-              <div key={cat.id} className="relative">
-                {/* Background track */}
-                <div className="h-full absolute inset-0 bg-gray-200 rounded-lg" />
-                {/* Progress fill */}
-                <div
-                  className={`h-full absolute inset-y-0 left-0 ${progressColor} rounded-lg transition-all`}
-                  style={{ width: `${percent}%` }}
-                />
-                {/* Content */}
-                <div
-                  onClick={() => handleEditCategory(cat)}
-                  className="relative grid grid-cols-3 sm:grid-cols-3 text-[17px] items-center px-4 py-2 hover:scale-103 hover:cursor-pointer"
-                >
-                  <span className={`${textColor}`}>{cat.name}</span>
-                  <span className={`${textColor}`}>{cat.amount}DH</span>
-                  <span className={`${textColor} text-center`}>
-                    {cat.budget}DH
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Categories List */}
-      <h2 className="text-xl font-semibold mt-10 mb-4">Spendings</h2>
-      <div className="space-y-6">
-        {/* Grid of Spendings */}
-        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {currentSpendings.map((spending) => (
-            <div
-              key={spending.id}
-              className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow"
-            >
-              <div className="flex justify-between items-center mb-2">
-                <span
-                  className="text-sm font-medium px-2 py-1 rounded-full"
-                  style={{
-                    backgroundColor: spending.category.color,
-                    color: '#fff',
-                  }}
-                >
-                  {spending.category.name}
-                </span>
-                <span className="text-sm text-gray-500">
-                  {new Date(spending.createdAt).toLocaleDateString()}
-                </span>
-              </div>
-
-              <p className="text-lg font-semibold text-gray-800">
-                {spending.amount.toLocaleString()} MAD
-              </p>
-              <p className="text-sm text-gray-600">{spending.description}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Pagination Controls */}
-        <div className="flex justify-center gap-2 mt-4">
-          <button
-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            disabled={currentPage === 1}
-            className="px-3 py-1 text-sm bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-50"
-          >
-            Previous
-          </button>
-          <span className="text-sm text-gray-600">
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 text-sm bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
       </div>
 
       {showModal && (
@@ -382,12 +264,43 @@ export default function SpendingPage() {
                 <DatePicker
                   onChange={(date: Date | undefined) => setDate(date)}
                 />
+                <input
+                  type="hidden"
+                  name="createdAt"
+                  placeholder="Created At"
+                  value={date?.toString() || ''}
+                />
                 <button
                   type="submit"
                   className="bg-green-200 w-full text-black px-4 py-2 rounded-lg shadow hover:bg-green-300 transition"
                   disabled={isPending}
                 >
-                  {isPending ? 'Adding...' : 'Add Category'}
+                  {isPending ? (
+                    <div className="flex justify-center items-center m-3">
+                      <svg
+                        className="animate-spin h-6 w-6 text-blue-500"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                        ></path>
+                      </svg>
+                    </div>
+                  ) : (
+                    'Add Category'
+                  )}
                 </button>
               </form>
             ) : (
@@ -513,6 +426,16 @@ export default function SpendingPage() {
           </div>
         </div>
       )}
+
+      <CategoryModal
+        isOpen={isModalOpen}
+        onClose={() => handleOnCloseCategoryModal()}
+        categoryName={catSpendings?.categoryName}
+        totalBudget={catSpendings?.totalBudget}
+        totalSpent={catSpendings?.totalSpent}
+        highestSpending={catSpendings && catSpendings.highestSpending}
+        spendings={(catSpendings && catSpendings.spendings) || []}
+      />
     </div>
   );
 }

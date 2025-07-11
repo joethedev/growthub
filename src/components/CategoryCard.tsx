@@ -15,6 +15,7 @@ interface CategoryCardProps {
   currency?: string;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
+  onClick?: (id: string) => void;
 }
 
 const CategoryCard: React.FC<CategoryCardProps> = ({
@@ -26,6 +27,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
   currency = 'MAD',
   onEdit,
   onDelete,
+  onClick,
 }) => {
   const remaining = budget - spent;
   const spentPercentage = (spent / budget) * 100;
@@ -40,7 +42,10 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
+    <div
+      onClick={() => onClick?.(id)}
+      className="bg-white rounded-lg p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200"
+    >
       {/* Header with category name and menu */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-3">

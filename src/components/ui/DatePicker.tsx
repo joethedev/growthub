@@ -25,18 +25,15 @@ export function DatePicker({
   }, [date, onChange]);
 
   return (
-    <div className="flex flex-col gap-3">
-      <Label htmlFor="date" className="px-1">
-        Date of birth
-      </Label>
+    <div className="flex flex-col gap-3 ">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
             id="date"
-            className="w-48 justify-between font-normal"
+            className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-800 transition bg-white text-gray-900 placeholder-gray-400"
           >
-            {date ? date.toLocaleDateString() : 'Select date'}
+            {date ? date.toLocaleDateString() : 'Select spending date'}
             <ChevronDownIcon />
           </Button>
         </PopoverTrigger>
