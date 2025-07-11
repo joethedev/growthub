@@ -1,7 +1,6 @@
 'use server';
 
 import { prisma } from '@/lib/prisma';
-import { currentUser } from '@clerk/nextjs/server';
 import { z } from 'zod';
 
 const SpendingSchema = z.object({
@@ -12,9 +11,7 @@ const SpendingSchema = z.object({
 });
 
 export async function addSpending(formData: FormData) {
-  const authUser = await currentUser();
   const createdAtRaw = formData.get('createdAt');
-  console.log('Created At Raw:', createdAtRaw);
   const raw = {
     amount: Number(formData.get('amount')),
     description: formData.get('description'),

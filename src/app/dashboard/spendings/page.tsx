@@ -7,17 +7,13 @@ import { addCategory } from '@/app/actions/addCategory';
 import { getUserCategories } from '@/app/actions/getUserCategories';
 import toast from 'react-hot-toast';
 import { addSpending } from '@/app/actions/spendings/addSpending';
-import { getSpendings } from '@/app/actions/spendings/getSpendings';
-import { SpendingWithCategory } from '@/app/actions/spendings/getSpendings';
 import { deleteCategoryById } from '@/app/actions/categories/deleteCategory';
 import { editCategory } from '@/app/actions/categories/editCategory';
 import CategoryCard from '@/components/CategoryCard';
 import { DatePicker } from '@/components/ui/DatePicker';
 import CategoryModal from '@/components/CategoryModal';
-import { CategorySpendings, SpendingType } from '@/lib/types';
+import { CategorySpendings } from '@/lib/types';
 import { getSpendingsByCategory } from '@/app/actions/spendings/getSpendingsByCategory';
-
-const ITEMS_PER_PAGE = 10;
 
 type Category = {
   id: string;
@@ -37,8 +33,6 @@ export default function SpendingPage() {
   const [isAddSpending, setIsAddSpending] = useState(false);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [spendings, setSpendings] = useState<SpendingWithCategory[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [color, setColor] = useState('#ff0000');
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -200,24 +194,48 @@ export default function SpendingPage() {
           </button>
         </div>
       </div>
-
-      <div className="flex flex-col gap-4 ">
-        {categories.map((category) => (
-          <div key={category.id} className="flex-shrink-0 w-full">
-            <CategoryCard
-              id={category.id}
-              name={category.name}
-              color={category.color}
-              budget={category.budget}
-              spent={category.amount}
-              currency="MAD"
-              onClick={() => handleOpenCategory(category.id)}
-              onEdit={() => handleEditCategory(category)}
-              onDelete={() => handleDeleteCategory(category)}
-            />
-          </div>
-        ))}
-      </div>
+      {loading ? (
+        <div className="flex justify-center items-center mt-7">
+          <svg
+            className="animate-spin h-6 w-6 text-blue-500"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            ></path>
+          </svg>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-4 ">
+          {categories.map((category) => (
+            <div key={category.id} className="flex-shrink-0 w-full">
+              <CategoryCard
+                id={category.id}
+                name={category.name}
+                color={category.color}
+                budget={category.budget}
+                spent={category.amount}
+                currency="MAD"
+                onClick={() => handleOpenCategory(category.id)}
+                onEdit={() => handleEditCategory(category)}
+                onDelete={() => handleDeleteCategory(category)}
+              />
+            </div>
+          ))}
+        </div>
+      )}
 
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
