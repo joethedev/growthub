@@ -5,9 +5,7 @@ import { currentUser } from '@clerk/nextjs/server';
 import { z } from 'zod';
 
 const CategorySchema = z.object({
-  userId: z.string().min(1, 'Name is required'),
   name: z.string().min(1, 'Name is required'),
-  description: z.string().min(1, 'Description is required'),
   budget: z.number().min(1, 'Budget is required'),
   color: z
     .string()
@@ -16,10 +14,14 @@ const CategorySchema = z.object({
 
 export async function addCategory(formData: FormData) {
   const authUser = await currentUser();
+  const userId = authUser?.id;
+
+  if (!userId) {
+    throw new Error('Unauthorized');
+  }
+
   const raw = {
-    userId: authUser?.id,
     name: formData.get('name'),
-    description: formData.get('description'),
     budget: Number(formData.get('budget')),
     color: formData.get('color'),
   };
@@ -31,5 +33,36 @@ export async function addCategory(formData: FormData) {
     throw new Error(errorMessages);
   }
 
-  await prisma.category.create({ data: parsed.data });
+  // 🔍 Check for current period for the user
+  const currentPeriod = await prisma.period.findFirst({
+    where: {
+      userId,
+      isCurrent: true,
+    },
+  });
+
+  let periodId: string;
+
+  if (currentPeriod) {
+    periodId = currentPeriod.id;
+  } else {
+    // 🆕 If no current period, create one starting today with default 1-month duration
+    const newPeriod = await prisma.period.create({
+      data: {
+        userId,
+        startDate: new Date(),
+        endDate: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+        isCurrent: true,
+      },
+    });
+
+    periodId = newPeriod.id;
+  }
+
+  await prisma.category.create({
+    data: {
+      ...parsed.data,
+      periodId,
+    },
+  });
 }

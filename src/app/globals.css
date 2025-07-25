@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -44,72 +44,116 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.141 0.005 285.823);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.141 0.005 285.823);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.141 0.005 285.823);
-  --primary: oklch(0.21 0.006 285.885);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.967 0.001 286.375);
-  --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.21 0.006 285.885);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.705 0.015 286.067);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-primary: oklch(0.21 0.006 285.885);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.705 0.015 286.067);
+  /* Growthub Brand Colors */
+  --primary: #3a86ff; /* #3A86FF - Primary Blue */
+  --primary-foreground: hsl(0 0% 100%);
+  --primary-light: #e0f2fe; /* Lighter blue for gradients */
+
+  --accent: #06d6a0; /* #06D6A0 - Accent Green */
+  --accent-foreground: hsl(0 0% 100%);
+  --accent-light: hsl(162 94% 70%); /* Lighter green */
+
+  /* Modern SaaS Backgrounds */
+  --background: hsl(220 14% 98%); /* #F9FAFB equivalent */
+  --foreground: hsl(220 9% 24%); /* Dark gray text */
+
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(220 9% 24%);
+
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(220 9% 24%);
+
+  /* Secondary colors for UI elements */
+  --secondary: hsl(220 13% 95%); /* Light gray */
+  --secondary-foreground: hsl(220 9% 24%);
+
+  --muted: hsl(220 13% 95%);
+  --muted-foreground: hsl(220 9% 50%);
+
+  /* Borders and inputs */
+  --border: hsl(220 13% 91%);
+  --input: hsl(220 13% 91%);
+  --ring: hsl(225 95% 65%); /* Primary for focus rings */
+
+  /* Destructive states */
+  --destructive: hsl(0 84% 60%);
+  --destructive-foreground: hsl(0 0% 100%);
+
+  /* Growthub specific design tokens */
+  --hero-gradient: linear-gradient(
+    135deg,
+    hsl(var(--primary)),
+    hsl(var(--accent))
+  );
+  --card-shadow: 0 1px 3px 0 hsl(220 9% 24% / 0.1),
+    0 1px 2px -1px hsl(220 9% 24% / 0.1);
+  --card-shadow-lg: 0 10px 15px -3px hsl(220 9% 24% / 0.1),
+    0 4px 6px -4px hsl(220 9% 24% / 0.1);
+
+  /* Spacing scale: 4px, 8px, 16px, 32px */
+  --spacing-xs: 0.25rem; /* 4px */
+  --spacing-sm: 0.5rem; /* 8px */
+  --spacing-md: 1rem; /* 16px */
+  --spacing-lg: 2rem; /* 32px */
+
+  --radius: 1rem; /* 2xl rounded corners */
+
+  --sidebar-background: hsl(240 0% 98%);
+
+  --sidebar-foreground: hsl(240 5.3% 26.1%);
+
+  --sidebar-primary: hsl(240 5.9% 10%);
+
+  --sidebar-primary-foreground: hsl(0 0% 98%);
+
+  --sidebar-accent: hsl(240 4.8% 95.9%);
+
+  --sidebar-accent-foreground: hsl(240 5.9% 10%);
+
+  --sidebar-border: hsl(220 13% 91%);
+
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
 
 .dark {
-  --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.21 0.006 285.885);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.21 0.006 285.885);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.92 0.004 286.32);
-  --primary-foreground: oklch(0.21 0.006 285.885);
-  --secondary: oklch(0.274 0.006 286.033);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.274 0.006 286.033);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.552 0.016 285.938);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.21 0.006 285.885);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.274 0.006 286.033);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.552 0.016 285.938);
+  /* Dark theme for Growthub */
+  --background: hsl(222 84% 3%); /* #18181B equivalent */
+  --foreground: hsl(0 0% 100%);
+
+  --card: hsl(222 84% 5%);
+  --card-foreground: hsl(0 0% 100%);
+
+  --popover: hsl(222 84% 5%);
+  --popover-foreground: hsl(0 0% 100%);
+
+  --primary: hsl(225 95% 65%); /* Keep primary blue */
+  --primary-foreground: hsl(0 0% 100%);
+  --primary-light: hsl(225 95% 85%);
+
+  --accent: hsl(162 94% 46%); /* Keep accent green */
+  --accent-foreground: hsl(0 0% 100%);
+  --accent-light: hsl(162 94% 70%);
+
+  --secondary: hsl(222 84% 10%); /* Dark secondary */
+  --secondary-foreground: hsl(0 0% 100%);
+
+  --muted: hsl(222 84% 10%);
+  --muted-foreground: hsl(215 20% 65%);
+
+  --destructive: hsl(0 84% 60%);
+  --destructive-foreground: hsl(0 0% 100%);
+
+  --border: hsl(222 84% 15%);
+  --input: hsl(222 84% 15%);
+  --ring: hsl(225 95% 65%);
+  --sidebar-background: hsl(240 5.9% 10%);
+  --sidebar-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-primary: hsl(224.3 76.3% 48%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(240 3.7% 15.9%);
+  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-border: hsl(240 3.7% 15.9%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
 
 @layer base {

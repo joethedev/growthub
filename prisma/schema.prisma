@@ -15,15 +15,25 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model Category {
-  id          String   @id @default(cuid())
-  userId      String
-  name        String
-  description String
-  color       String
-  budget      Float    @default(10)
-  createdAt   DateTime @default(now())
+model Period {
+  id        String   @id @default(cuid())
+  userId    String // Clerk user ID
+  startDate DateTime
+  endDate   DateTime
+  isCurrent Boolean  @default(false)
 
+  categories Category[]
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  periodId  String
+  name      String
+  color     String
+  budget    Float    @default(0)
+  createdAt DateTime @default(now())
+
+  period    Period     @relation(fields: [periodId], references: [id], onDelete: Cascade)
   spendings Spending[]
 }
 
@@ -33,6 +43,27 @@ model Spending {
   amount      Float
   description String
   createdAt   DateTime @default(now())
+  isRecurring Boolean  @default(false)
 
   category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+}
+
+model CategoryTemplate {
+  id     String @id @default(cuid())
+  userId String // Clerk user ID
+  name   String
+  color  String
+  budget Float  @default(0)
+
+  recurringSpendings RecurringSpendingTemplate[]
+}
+
+model RecurringSpendingTemplate {
+  id          String @id @default(cuid())
+  templateId  String
+  amount      Float
+  description String
+  recurrence  String // e.g., "monthly"
+
+  categoryTemplate CategoryTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
 }

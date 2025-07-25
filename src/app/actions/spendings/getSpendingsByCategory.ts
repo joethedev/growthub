@@ -22,7 +22,6 @@ export async function getSpendingsByCategory(categoryId: string) {
     const category = await prisma.category.findFirst({
       where: {
         id: categoryId,
-        userId,
       },
     });
 

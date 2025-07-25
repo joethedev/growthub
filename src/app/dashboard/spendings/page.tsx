@@ -17,9 +17,7 @@ import { getSpendingsByCategory } from '@/app/actions/spendings/getSpendingsByCa
 
 type Category = {
   id: string;
-  userId: string;
   name: string;
-  description: string;
   budget: number;
   color: string;
   createdAt: string;
@@ -331,11 +329,7 @@ export default function SpendingPage() {
                   placeholder="Name"
                   className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-800 transition bg-white text-gray-900 placeholder-gray-400"
                 />
-                <input
-                  name="description"
-                  placeholder="Description"
-                  className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-800 transition bg-white text-gray-900 placeholder-gray-400"
-                />
+
                 <input
                   type="number"
                   name="budget"
@@ -394,12 +388,6 @@ export default function SpendingPage() {
                 name="name"
                 defaultValue={editingCategory?.name || ''}
                 placeholder="Name"
-                className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-800 transition bg-white text-gray-900 placeholder-gray-400"
-              />
-              <input
-                name="description"
-                defaultValue={editingCategory?.description || ''}
-                placeholder="Description"
                 className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-800 transition bg-white text-gray-900 placeholder-gray-400"
               />
               <input
