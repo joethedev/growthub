@@ -30,7 +30,7 @@ export const ProblemSection = () => {
         </h2>
 
         <p className="text-xl text-muted-foreground mb-16 max-w-2xl mx-auto">
-          Traditional budgeting tools are complex, overwhelming, and don't
+          Traditional budgeting tools are complex, overwhelming, and don&apos;t
           address the real behavioral patterns behind your money habits.
         </p>
 

@@ -2,6 +2,7 @@
 
 import { addPeriod } from '@/app/actions/period/add';
 import { useState, useTransition } from 'react';
+import { toast } from 'react-hot-toast';
 
 export default function AddPeriod() {
   const [startDate, setStartDate] = useState('');
@@ -19,8 +20,12 @@ export default function AddPeriod() {
         setSuccess(true);
         setStartDate('');
         setEndDate('');
-      } catch (err: any) {
-        setError(err.message || 'Failed to add period');
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          toast.error(err.message || 'Something went wrong');
+        } else {
+          toast.error('Something went wrong');
+        }
       }
     });
   };

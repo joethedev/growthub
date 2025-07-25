@@ -17,8 +17,6 @@ export async function getSpendingsByCategory(categoryId: string) {
       throw new Error('Unauthorized');
     }
 
-    const userId = parsed.data.userId;
-
     const category = await prisma.category.findFirst({
       where: {
         id: categoryId,

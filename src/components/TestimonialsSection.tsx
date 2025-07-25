@@ -15,7 +15,7 @@ export const TestimonialsSection = () => {
       role: 'Software Engineer',
       avatar: 'MJ',
       quote:
-        "Love the clean interface and how it keeps me on track. Finally, a money app that doesn't feel overwhelming or judgmental.",
+        'Love the clean interface and how it keeps me on track. Finally, a money app that doesn’t feel overwhelming or judgmental.',
       rating: 5,
     },
     {
@@ -23,7 +23,7 @@ export const TestimonialsSection = () => {
       role: 'Marketing Manager',
       avatar: 'ER',
       quote:
-        "The habit streaks feature changed everything for me. I've been consistent with my savings goals for 3 months straight now!",
+        'The habit streaks feature changed everything for me. I’ve been consistent with my savings goals for 3 months straight now!',
       rating: 5,
     },
   ];
@@ -58,7 +58,7 @@ export const TestimonialsSection = () => {
               </div>
 
               <blockquote className="text-card-foreground mb-6 leading-relaxed">
-                "{testimonial.quote}"
+                {`"${testimonial.quote}"`}
               </blockquote>
 
               <div className="flex items-center gap-4">
@@ -89,7 +89,7 @@ export const TestimonialsSection = () => {
                 />
               ))}
             </div>
-            <span className="font-medium">4.9/5 from 2,847 reviews</span>
+            <span className="font-medium">4.9/5 from 2847 reviews</span>
           </div>
         </div>
       </div>

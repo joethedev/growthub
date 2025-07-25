@@ -6,7 +6,7 @@ export const PricingSection = () => {
     <section className="py-20">
       <div className="container mx-auto px-4 max-w-4xl text-center">
         <h2 className="text-3xl lg:text-4xl font-bold mb-6">
-          Start for free, upgrade when you're ready
+          Start for free, upgrade when you&apos;re ready
         </h2>
 
         <p className="text-xl text-muted-foreground mb-12">
@@ -44,7 +44,7 @@ export const PricingSection = () => {
           </Button>
 
           <p className="text-sm text-muted-foreground mt-4">
-            Need team features?{' '}
+            Need team features?
             <a href="#" className="text-primary hover:underline">
               Contact us
             </a>
