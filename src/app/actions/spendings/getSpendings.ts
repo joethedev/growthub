@@ -10,7 +10,13 @@ const SpendingSchema = z.object({
 });
 
 export type SpendingWithCategory = Prisma.SpendingGetPayload<{
-  include: { category: true };
+  include: {
+    category: {
+      include: {
+        period: true;
+      };
+    };
+  };
 }>;
 
 export async function getSpendings() {
@@ -25,18 +31,24 @@ export async function getSpendings() {
   const spendings: SpendingWithCategory[] = await prisma.spending.findMany({
     where: {
       category: {
-        userId: parsed.data.userId,
+        period: {
+          userId: parsed.data.userId,
+        },
       },
     },
     include: {
-      category: true,
+      category: {
+        include: {
+          period: true, // Optional: if you want access to period info
+        },
+      },
     },
     orderBy: {
       createdAt: 'desc',
     },
   });
 
-  //   console.table(spendings);
+  console.table(spendings);
 
   return spendings;
 }

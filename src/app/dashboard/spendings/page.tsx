@@ -14,6 +14,7 @@ import { DatePicker } from '@/components/ui/DatePicker';
 import CategoryModal from '@/components/CategoryModal';
 import { CategorySpendings } from '@/lib/types';
 import { getSpendingsByCategory } from '@/app/actions/spendings/getSpendingsByCategory';
+import { getSpendings } from '@/app/actions/spendings/getSpendings';
 
 type Category = {
   id: string;
@@ -132,6 +133,7 @@ export default function SpendingPage() {
     startTransition(async () => {
       try {
         const categorySpendings = await getSpendingsByCategory(categoryId);
+        await getSpendings();
         setCatSpendings(categorySpendings);
       } catch (err: unknown) {
         if (err instanceof Error) {
