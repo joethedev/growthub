@@ -68,9 +68,9 @@ export function RecentSpendings({
                     {spending.category}
                   </Badge>
                 </div>
-                {/* <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   {formatDistanceToNow(spending.date, { addSuffix: true })}
-                </p> */}
+                </p>
               </div>
               <div className="text-right">
                 <p className="font-semibold text-destructive">
