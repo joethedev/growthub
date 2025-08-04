@@ -1,4 +1,9 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import { BudgetProgressBar } from './BudgetProgressBar';
+import { getTotals } from '@/app/actions/spendings/getTotals';
+import toast from 'react-hot-toast';
 // import { SpendingChart } from "./SpendingChart";
 // import { RecentSpendings } from "./RecentSpendings";
 // import { OverBudgetAlerts } from "./OverBudgetAlerts";
@@ -78,6 +83,32 @@ const mockData = {
 };
 
 export function Dashboard() {
+  const [totals, setTotals] = useState<{
+    totalBudget: number;
+    totalSpent: number;
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchTotals();
+  }, []);
+
+  const fetchTotals = async () => {
+    try {
+      setLoading(true);
+      const data = await getTotals();
+      setTotals(data);
+    } catch (err: unknown) {
+      console.error('Failed to fetch totals:', err);
+      toast.error('Failed to load totals.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) return <div>Loading totals...</div>;
+  // if (!totals) return <div>No totals available</div>;
+
   return (
     <div className="min-h-screen bg-background p-4 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -93,8 +124,8 @@ export function Dashboard() {
 
         {/* Budget Overview */}
         <BudgetProgressBar
-          spent={mockData.budget.spent}
-          budget={mockData.budget.total}
+          spent={totals?.totalSpent}
+          budget={totals?.totalBudget}
         />
 
         {/* Main Content Grid */}

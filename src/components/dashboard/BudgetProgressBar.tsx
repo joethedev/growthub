@@ -2,8 +2,8 @@ import { Progress } from '@/components/ui/progress';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 
 interface BudgetProgressBarProps {
-  spent: number;
-  budget: number;
+  spent: number | undefined;
+  budget: number | undefined;
   currency?: string;
 }
 
@@ -12,6 +12,20 @@ export function BudgetProgressBar({
   budget,
   currency = 'DH',
 }: BudgetProgressBarProps) {
+  if (spent === undefined || budget === undefined) {
+    return (
+      <Card className="animate-fade-in">
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold">
+            Budget Overview
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-center text-muted-foreground">
+          Loading...
+        </CardContent>
+      </Card>
+    );
+  }
   const percentage = (spent / budget) * 100;
 
   const getStatusColor = () => {

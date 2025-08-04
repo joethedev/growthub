@@ -48,7 +48,5 @@ export async function getSpendings() {
     },
   });
 
-  console.table(spendings);
-
   return spendings;
 }
